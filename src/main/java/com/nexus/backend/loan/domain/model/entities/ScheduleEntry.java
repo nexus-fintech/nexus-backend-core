@@ -2,11 +2,7 @@ package com.nexus.backend.loan.domain.model.entities;
 
 import com.nexus.backend.loan.domain.model.valueobjects.Money;
 import com.nexus.backend.shared.domain.model.entities.AuditableModel;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,12 +25,16 @@ public class ScheduleEntry extends AuditableModel {
     private LocalDate dueDate;     // Fecha de vencimiento
 
     @Embedded
-    private Money principal;       // Cantidad de capital
-    @Embedded
-    private Money interest;        // Cantidad de interés
+    @AttributeOverride(name = "amount", column = @Column(name = "principal_amount"))
+    private Money principal;
 
     @Embedded
-    private Money fee;             // Comisión o cargo fijo (si aplica)
+    @AttributeOverride(name = "amount", column = @Column(name = "interest_amount"))
+    private Money interest;
+
+    @Embedded
+    @AttributeOverride(name = "amount", column = @Column(name = "fee_amount"))
+    private Money fee;            // Comisión o cargo fijo (si aplica)
 
     private boolean isPaid;
 
