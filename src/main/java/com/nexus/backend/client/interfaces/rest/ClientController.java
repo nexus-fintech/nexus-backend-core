@@ -1,6 +1,8 @@
 package com.nexus.backend.client.interfaces.rest;
 
+import com.nexus.backend.client.domain.model.queries.GetClientByDniQuery;
 import com.nexus.backend.client.domain.model.queries.GetClientByEmailQuery;
+import com.nexus.backend.client.domain.model.valueobjects.Dni;
 import com.nexus.backend.client.domain.model.valueobjects.EmailAddress;
 import com.nexus.backend.client.domain.services.ClientCommandService;
 import com.nexus.backend.client.domain.services.ClientQueryService;
@@ -68,25 +70,46 @@ public class ClientController {
     /**
      * Endpoint to get a client by email.
      * Demonstrates the usage of the Query Service (CQRS).
-     * Usage: GET /api/v1/clients?email=example@test.com
+     * Usage: GET /api/v1/clients/email/{email}
      *
      * @param email The email to search for.
      * @return The client resource if found.
      */
-    @GetMapping
+    @GetMapping("/email/{email}")
     @Operation(summary = "Get Client by Email", description = "Retrieves a client based on their email address.")
-    public ResponseEntity<ClientResource> getClientByEmail(@RequestParam String email) {
-        // 1. Create Query Object (Wrapping the String into the Value Object)
-        var getClientByEmailQuery = new GetClientByEmailQuery(new EmailAddress(email));
+    public ResponseEntity<ClientResource> getClientByEmail(@PathVariable String email) {
 
-        // 2. Execute Query Service
+        var getClientByEmailQuery = new GetClientByEmailQuery(new EmailAddress(email));
         var client = clientQueryService.handle(getClientByEmailQuery);
 
         if (client.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        // 3. Transform Entity -> Resource
+        var clientResource = ClientResourceFromEntityAssembler.toResourceFromEntity(client.get());
+
+        return ResponseEntity.ok(clientResource);
+    }
+
+    /**
+     * Endpoint to get a client by DNI.
+     * Demonstrates the usage of the Query Service (CQRS).
+     * Usage: GET /api/v1/clients/dni/{dni}
+     *
+     * @param dni The DNI to search for.
+     * @return The client resource if found.
+     */
+    @GetMapping("/dni/{dni}")
+    @Operation(summary = "Get Client by DNI", description = "Retrieves a client based on their DNI.")
+    public ResponseEntity<ClientResource> getClientByDni(@PathVariable String dni) {
+
+        var getClientByDniQuery = new GetClientByDniQuery(new Dni(dni));
+        var client = clientQueryService.handle(getClientByDniQuery);
+
+        if (client.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
         var clientResource = ClientResourceFromEntityAssembler.toResourceFromEntity(client.get());
 
         return ResponseEntity.ok(clientResource);

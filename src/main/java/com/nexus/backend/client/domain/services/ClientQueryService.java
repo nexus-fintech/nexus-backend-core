@@ -1,6 +1,7 @@
 package com.nexus.backend.client.domain.services;
 
 import com.nexus.backend.client.domain.model.aggregates.Client;
+import com.nexus.backend.client.domain.model.queries.GetClientByDniQuery;
 import com.nexus.backend.client.domain.model.queries.GetClientByEmailQuery;
 
 import java.util.Optional;
@@ -19,4 +20,6 @@ public interface ClientQueryService {
      * @return El cliente encontrado (Optional) o vacío si no existe.
      */
     Optional<Client> handle(GetClientByEmailQuery query);
+
+    Optional<Client> handle(GetClientByDniQuery query);
 }
