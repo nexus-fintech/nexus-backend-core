@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 /**
- * Implementación del Servicio de Consultas de Clientes.
- * Optimizado para lectura. Separa la responsabilidad de lectura de la escritura (CQRS).
+ * Implementation of the Client Query Service.
+ * Optimized for read operations. Separates read responsibility from write responsibility (CQRS).
  */
 @Service
 @RequiredArgsConstructor

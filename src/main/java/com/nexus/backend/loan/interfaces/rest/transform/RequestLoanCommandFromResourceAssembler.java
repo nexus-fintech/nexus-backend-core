@@ -4,7 +4,7 @@ import com.nexus.backend.loan.domain.model.commands.RequestLoanCommand;
 import com.nexus.backend.loan.interfaces.rest.resources.RequestLoanResource;
 
 /**
- * Ensamblador para convertir de Recurso (JSON) a Comando (Dominio).
+ * Assembler to convert from Resource (JSON) to Command (Domain).
  */
 public class RequestLoanCommandFromResourceAssembler {
 

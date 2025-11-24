@@ -6,16 +6,16 @@ import com.nexus.backend.loan.domain.model.queries.GetLoanByClientQuery;
 import java.util.List;
 
 /**
- * Interface para el Servicio de Consultas de Préstamos.
- * Define las operaciones de lectura (CQRS).
+ * Interface for the Loan Query Service.
+ * Defines read operations (CQRS).
  */
 public interface LoanQueryService {
 
     /**
-     * Maneja la consulta para obtener los préstamos de un cliente.
+     * Handles the query to retrieve a client's loans.
      *
-     * @param query Objeto query con el ID del cliente.
-     * @return Lista de préstamos encontrados.
+     * @param query Query object containing the client ID.
+     * @return List of loans found.
      */
     List<Loan> handle(GetLoanByClientQuery query);
 }

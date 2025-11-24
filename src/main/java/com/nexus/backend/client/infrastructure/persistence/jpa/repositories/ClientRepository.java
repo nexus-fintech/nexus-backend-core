@@ -9,31 +9,31 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Repositorio JPA de Infraestructura.
- * Implementa métodos usando Value Objects para mayor seguridad de tipos,
- * alineado con las mejores prácticas de DDD.
+ * JPA Infrastructure Repository.
+ * Implements methods using Value Objects for stronger type safety,
+ * aligned with DDD best practices.
  */
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
     /**
-     * Busca un cliente coincidiendo el objeto embebido Dni completo.
-     * Spring Data compara los campos internos automáticamente.
+     * Finds a client by matching the full embedded Dni value object.
+     * Spring Data automatically compares the internal fields.
      */
     Optional<Client> findByDni(Dni dni);
 
     /**
-     * Busca un cliente coincidiendo el objeto embebido EmailAddress completo.
+     * Finds a client by matching the full embedded EmailAddress value object.
      */
     Optional<Client> findByEmail(EmailAddress email);
 
     /**
-     * Verifica existencia por objeto Dni.
+     * Checks existence by Dni value object.
      */
     boolean existsByDni(Dni dni);
 
     /**
-     * Verifica existencia por objeto EmailAddress.
+     * Checks existence by EmailAddress value object.
      */
     boolean existsByEmail(EmailAddress email);
 }

@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * Recurso de Salida (Response Body).
- * Expone los detalles del préstamo, aplanando los Value Objects (Money, InterestRate)
- * a tipos estándar (BigDecimal, Double) para el JSON.
+ * Output Resource (Response Body).
+ * Exposes loan details, flattening Value Objects (Money, InterestRate)
+ * into standard types (BigDecimal, Double) for JSON.
  */
 public record LoanResource(
         Long id,

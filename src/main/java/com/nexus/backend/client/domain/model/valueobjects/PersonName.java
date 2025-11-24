@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * Value Object para el nombre completo de una persona.
+ * Value Object for a person's full name.
  */
 @Embeddable
 public record PersonName(

@@ -1,9 +1,10 @@
 package com.nexus.backend.client.interfaces.rest.resources;
 
+
 /**
- * Recurso de Salida (Response Body).
- * Representa los datos del cliente que exponemos al exterior.
- * Aplanamos los Value Objects del dominio a tipos primitivos (String, Long).
+ * Output Resource (Response Body).
+ * Represents the client data exposed to the outside world.
+ * Domain Value Objects are flattened into primitive types (String, Long).
  */
 public record ClientResource(
         Long id,

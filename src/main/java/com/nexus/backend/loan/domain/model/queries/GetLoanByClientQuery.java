@@ -1,7 +1,7 @@
 package com.nexus.backend.loan.domain.model.queries;
 
 /**
- * Consulta para obtener todos los préstamos asociados a un cliente específico.
+ * Query to retrieve all loans associated with a specific client.
  */
 public record GetLoanByClientQuery(Long clientId) {
 }

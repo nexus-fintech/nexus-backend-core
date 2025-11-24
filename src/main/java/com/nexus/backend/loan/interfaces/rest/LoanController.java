@@ -3,10 +3,10 @@ package com.nexus.backend.loan.interfaces.rest;
 import com.nexus.backend.loan.domain.model.queries.GetLoanByClientQuery;
 import com.nexus.backend.loan.domain.services.LoanCommandService;
 import com.nexus.backend.loan.domain.services.LoanQueryService;
-import com.nexus.backend.loan.interfaces.rest.resources.ApproveLoanResource; // Nuevo Import
+import com.nexus.backend.loan.interfaces.rest.resources.ApproveLoanResource;
 import com.nexus.backend.loan.interfaces.rest.resources.LoanResource;
 import com.nexus.backend.loan.interfaces.rest.resources.RequestLoanResource;
-import com.nexus.backend.loan.interfaces.rest.transform.ApproveLoanCommandFromResourceAssembler; // Nuevo Import
+import com.nexus.backend.loan.interfaces.rest.transform.ApproveLoanCommandFromResourceAssembler;
 import com.nexus.backend.loan.interfaces.rest.transform.LoanResourceFromEntityAssembler;
 import com.nexus.backend.loan.interfaces.rest.transform.RequestLoanCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,19 +60,19 @@ public class LoanController {
     @Operation(summary = "Approve a Loan", description = "Evaluates risk using external engine and approves loan if eligible.")
     public ResponseEntity<LoanResource> approveLoan(
             @PathVariable Long loanId,
-            @RequestBody ApproveLoanResource resource) { // Agregamos el RequestBody
+            @RequestBody ApproveLoanResource resource) {
 
-        // 1. Transform Resource + ID -> Command
+        // Transform Resource + ID -> Command
         var approveLoanCommand = ApproveLoanCommandFromResourceAssembler.toCommandFromResource(loanId, resource);
 
-        // 2. Execute Command Service (Triggers Risk Engine + Amortization)
+        // Execute Command Service (Triggers Risk Engine + Amortization)
         var loan = loanCommandService.handle(approveLoanCommand);
 
         if (loan.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        // 3. Return updated resource (Status could be ACTIVE or REJECTED depending on logic)
+        // Return updated resource (Status could be ACTIVE or REJECTED depending on logic)
         var loanResource = LoanResourceFromEntityAssembler.toResourceFromEntity(loan.get());
         return ResponseEntity.ok(loanResource);
     }

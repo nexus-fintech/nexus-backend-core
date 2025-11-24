@@ -10,11 +10,11 @@ import java.util.List;
 public interface LoanRepository extends JpaRepository<Loan, Long> {
 
     /**
-     * Busca todos los préstamos que pertenecen a un cliente específico.
-     * Spring Data JPA implementa esto automáticamente basándose en el campo 'clientId' de la entidad Loan.
+     * Finds all loans belonging to a specific client.
+     * Spring Data JPA implements this automatically based on the 'clientId' field in the Loan entity.
      *
-     * @param clientId El ID del cliente (Foreign Key).
-     * @return Lista de préstamos asociados.
+     * @param clientId The client's ID (Foreign Key).
+     * @return List of associated loans.
      */
     List<Loan> findByClientId(Long clientId);
 

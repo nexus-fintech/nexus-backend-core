@@ -4,9 +4,9 @@ import com.nexus.backend.loan.domain.model.aggregates.Loan;
 import com.nexus.backend.loan.interfaces.rest.resources.LoanResource;
 
 /**
- * Ensamblador para convertir de Entidad (Dominio) a Recurso (JSON).
- * Extrae los valores primitivos de los Value Objects (Money, InterestRate)
- * para que puedan ser serializados a JSON.
+ * Assembler to convert from Entity (Domain) to Resource (JSON).
+ * Extracts primitive values from Value Objects (Money, InterestRate)
+ * so they can be serialized to JSON.
  */
 public class LoanResourceFromEntityAssembler {
 
@@ -14,10 +14,10 @@ public class LoanResourceFromEntityAssembler {
         return new LoanResource(
                 entity.getId(),
                 entity.getClientId(),
-                entity.getRequestedAmount().getAmount(),       // Extracción de VO Money
-                entity.getAnnualInterestRate().getRate().doubleValue(), // Extracción de VO InterestRate
+                entity.getRequestedAmount().getAmount(),              // Extracting from Money VO
+                entity.getAnnualInterestRate().getRate().doubleValue(), // Extracting from InterestRate VO
                 entity.getTermInMonths(),
-                entity.getStatus().name(),                     // Enum a String
+                entity.getStatus().name(),                             // Enum to String
                 entity.getDisbursementDate()
         );
     }

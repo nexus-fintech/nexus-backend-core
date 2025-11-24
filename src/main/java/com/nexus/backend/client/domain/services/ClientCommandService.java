@@ -6,18 +6,18 @@ import com.nexus.backend.client.domain.model.commands.CreateClientCommand;
 import java.util.Optional;
 
 /**
- * Interface para el Servicio de Comandos de Clientes.
- * Define las operaciones de escritura (mutación de estado) disponibles en el dominio.
- * La implementación residirá en la capa de Aplicación.
+ * Interface for the Client Command Service.
+ * Defines the write operations (state mutations) available in the domain.
+ * The implementation will reside in the Application layer.
  */
 public interface ClientCommandService {
 
     /**
-     * Maneja el comando de creación de un nuevo cliente.
-     * Orquesta la validación y persistencia.
+     * Handles the command to create a new client.
+     * Orchestrates validation and persistence.
      *
-     * @param command Datos necesarios para crear el cliente.
-     * @return El cliente creado (Optional) si la operación fue exitosa.
+     * @param command The data required to create the client.
+     * @return The created client (Optional) if the operation was successful.
      */
     Optional<Client> handle(CreateClientCommand command);
 }

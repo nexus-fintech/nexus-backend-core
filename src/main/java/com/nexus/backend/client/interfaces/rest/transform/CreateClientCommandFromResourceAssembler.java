@@ -4,7 +4,7 @@ import com.nexus.backend.client.domain.model.commands.CreateClientCommand;
 import com.nexus.backend.client.interfaces.rest.resources.CreateClientResource;
 
 /**
- * Ensamblador para convertir de Recurso (JSON de entrada) a Comando (Dominio).
+ * Assembler to convert from Resource (JSON input) to Command (Domain).
  */
 public class CreateClientCommandFromResourceAssembler {
 

@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Value Object para representar montos de dinero (capital, intereses, cuotas).
- * Es fundamental usar BigDecimal para evitar errores de precisión en cálculos financieros.
+ * Value Object to represent monetary amounts (principal, interest, installments).
+ * It is essential to use BigDecimal to avoid precision errors in financial calculations.
  */
 @Embeddable
 @Getter

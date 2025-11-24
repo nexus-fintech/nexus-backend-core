@@ -7,19 +7,25 @@ import com.nexus.backend.client.domain.model.queries.GetClientByEmailQuery;
 import java.util.Optional;
 
 /**
- * Interface para el Servicio de Consultas de Clientes.
- * Define las operaciones de lectura disponibles en el dominio.
- * Implementa el patrón CQRS separando la lectura de la escritura.
+ * Interface for the Client Query Service.
+ * Defines the read operations available in the domain.
+ * Implements the CQRS pattern by separating read and write responsibilities.
  */
 public interface ClientQueryService {
 
     /**
-     * Maneja la consulta para obtener un cliente por su email.
+     * Handles the query for retrieving a client by their email.
      *
-     * @param query Objeto query con el criterio de búsqueda.
-     * @return El cliente encontrado (Optional) o vacío si no existe.
+     * @param query Query object containing the search criteria.
+     * @return The found client (Optional) or empty if none exists.
      */
     Optional<Client> handle(GetClientByEmailQuery query);
 
+    /**
+     * Handles the query for retrieving a client by their DNI.
+     *
+     * @param query Query object containing the search criteria.
+     * @return The found client (Optional) or empty if none exists.
+     */
     Optional<Client> handle(GetClientByDniQuery query);
 }

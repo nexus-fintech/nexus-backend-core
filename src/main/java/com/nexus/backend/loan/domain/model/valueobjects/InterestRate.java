@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 /**
- * Value Object para la tasa de interés anual aplicada al préstamo.
- * Se representa como porcentaje (ej: 0.12 para 12%).
+ * Value Object for the annual interest rate applied to the loan.
+ * Represented as a percentage (e.g., 0.12 for 12%).
  */
 @Embeddable
 @Getter
@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 public class InterestRate {
 
     @DecimalMin(value = "0.00", inclusive = true)
-    @DecimalMax(value = "1.00", inclusive = true) // Máximo 100%
+    @DecimalMax(value = "1.00", inclusive = true) // Maximum 100%
     private BigDecimal rate;
 
     public InterestRate(BigDecimal rate) {

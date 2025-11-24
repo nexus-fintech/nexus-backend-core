@@ -11,12 +11,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Agregado Principal del Bounded Context de Clientes.
- * Representa a la entidad financiera que solicita un microcrédito.
+ * Main Aggregate of the Clients Bounded Context.
+ * Represents the financial entity (client) requesting a microloan.
  */
 @Entity
 @Getter
-@NoArgsConstructor // Requerido por JPA
+@NoArgsConstructor // Required by JPA
 public class Client extends AuditableAbstractAggregateRoot<Client> {
 
     @Embedded
@@ -48,8 +48,8 @@ public class Client extends AuditableAbstractAggregateRoot<Client> {
     private StreetAddress address;
 
     /**
-     * Constructor que maneja la creación del agregado basado en el comando.
-     * Aquí es donde ocurre la conversión de datos planos (Command) a objetos de valor (Domain).
+     * Constructor that handles the creation of the aggregate based on the command.
+     * This is where the transformation from flat data (Command) to Value Objects (Domain) occurs.
      */
     public Client(CreateClientCommand command) {
         this.name = new PersonName(command.firstName(), command.lastName());
@@ -63,5 +63,5 @@ public class Client extends AuditableAbstractAggregateRoot<Client> {
         );
     }
 
-    // Aquí irían métodos de negocio, ej: updateAddress(), changeEmail(), etc.
+    // Business methods would go here, e.g., updateAddress(), changeEmail(), etc.
 }

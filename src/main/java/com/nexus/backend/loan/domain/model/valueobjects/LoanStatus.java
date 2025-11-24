@@ -1,14 +1,14 @@
 package com.nexus.backend.loan.domain.model.valueobjects;
 
 /**
- * Value Object (Enum) para el estado del préstamo.
- * Define la máquina de estados dentro del agregado Loan.
+ * Value Object (Enum) for the loan status.
+ * Defines the state machine within the Loan aggregate.
  */
 public enum LoanStatus {
-    REQUESTED,  // Solicitado por el cliente (fase inicial)
-    APPROVED,   // Aprobado por el motor de riesgo/administrador
-    REJECTED,   // Rechazado (No apto o riesgo alto)
-    ACTIVE,     // Desembolsado y en fase de pago
-    DEFAULT,    // En mora (Incumplimiento de pagos)
-    PAID        // Completamente pagado
+    REQUESTED,  // Requested by the client (initial phase)
+    APPROVED,   // Approved by the risk engine/administrator
+    REJECTED,   // Rejected (Not eligible or high risk)
+    ACTIVE,     // Disbursed and in repayment phase
+    DEFAULT,    // In default (Missed payments)
+    PAID        // Fully paid
 }

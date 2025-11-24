@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Implementación del Servicio de Consultas de Préstamos.
- * Orquesta la lógica de lectura: Obtención de historial crediticio.
+ * Implementation of the Loan Query Service.
+ * Orchestrates read logic: Retrieval of credit history.
  */
 @Service
 @RequiredArgsConstructor
@@ -20,14 +20,14 @@ public class LoanQueryServiceImpl implements LoanQueryService {
     private final LoanRepository loanRepository;
 
     /**
-     * Obtiene todos los préstamos asociados a un cliente específico.
+     * Retrieves all loans associated with a specific client.
      *
-     * @param query Objeto query que contiene el ID del cliente.
-     * @return Lista de préstamos encontrados.
+     * @param query Query object containing the client ID.
+     * @return List of loans found.
      */
     @Override
     public List<Loan> handle(GetLoanByClientQuery query) {
-        // Delegamos la búsqueda al repositorio usando el ID provisto en el query.
+        // Delegate the search to the repository using the ID provided in the query.
         return loanRepository.findByClientId(query.clientId());
     }
 }

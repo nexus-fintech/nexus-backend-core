@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 /**
- * Entidad que representa una cuota individual dentro del cronograma de pagos.
- * Vive y es gestionada por el Agregado Loan.
+ * Entity representing an individual installment within the repayment schedule.
+ * Lives and is managed by the Loan Aggregate.
  */
 @Entity
 @Getter
@@ -21,8 +21,8 @@ public class ScheduleEntry extends AuditableModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int installmentNumber; // Número de cuota (1, 2, 3...)
-    private LocalDate dueDate;     // Fecha de vencimiento
+    private int installmentNumber; // Installment number (1, 2, 3...)
+    private LocalDate dueDate;     // Due date
 
     @Embedded
     @AttributeOverride(name = "amount", column = @Column(name = "principal_amount"))
@@ -34,7 +34,7 @@ public class ScheduleEntry extends AuditableModel {
 
     @Embedded
     @AttributeOverride(name = "amount", column = @Column(name = "fee_amount"))
-    private Money fee;            // Comisión o cargo fijo (si aplica)
+    private Money fee;            // Fee or fixed charge (if applicable)
 
     private boolean isPaid;
 
@@ -47,12 +47,12 @@ public class ScheduleEntry extends AuditableModel {
         this.isPaid = false;
     }
 
-    // Metodo de negocio para registrar el pago
+    // Business method to mark the installment as paid
     public void markAsPaid() {
         this.isPaid = true;
     }
 
-    // Metodo auxiliar para obtener el total de la cuota
+    // Helper method to get the total amount of the installment
     public Money getTotalAmount() {
         return principal.add(interest).add(fee);
     }

@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * Value Object para el Documento Nacional de Identidad.
- * En el contexto de Microfinanzas, el DNI es un identificador único crítico.
+ * Value Object for the National Identity Document (DNI).
+ * In the Microfinance context, the DNI is a critical unique identifier.
  */
 @Embeddable
 public record Dni(

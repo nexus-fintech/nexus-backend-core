@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.NoArgsConstructor;
 
 /**
- * Value Object representando una dirección de correo electrónico.
- * Garantiza la integridad del formato del email en el dominio.
+ * Value Object representing an email address.
+ * Ensures the integrity of the email format within the domain.
  */
 @Embeddable
 public record EmailAddress(
