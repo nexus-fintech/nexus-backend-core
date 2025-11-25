@@ -1,5 +1,6 @@
 package com.nexus.backend.client.interfaces.rest;
 
+import com.nexus.backend.client.domain.model.queries.GetAllClientsQuery;
 import com.nexus.backend.client.domain.model.queries.GetClientByDniQuery;
 import com.nexus.backend.client.domain.model.queries.GetClientByEmailQuery;
 import com.nexus.backend.client.domain.model.valueobjects.Dni;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * REST controller for managing client profiles.
@@ -113,5 +116,14 @@ public class ClientController {
         var clientResource = ClientResourceFromEntityAssembler.toResourceFromEntity(client.get());
 
         return ResponseEntity.ok(clientResource);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ClientResource>> getAllClients() {
+        var getAllClients = new GetAllClientsQuery();
+        var client = clientQueryService.handle(getAllClients);
+        var clientResources = client.stream().map(
+                ClientResourceFromEntityAssembler::toResourceFromEntity).toList();
+        return ResponseEntity.ok(clientResources);
     }
 }
