@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class LoanController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('CLIENT')")
     @Operation(summary = "Request a new Loan", description = "Creates a loan application for a specific client.")
     public ResponseEntity<LoanResource> requestLoan(@RequestBody RequestLoanResource resource) {
         var requestLoanCommand = RequestLoanCommandFromResourceAssembler.toCommandFromResource(resource);
@@ -57,6 +59,7 @@ public class LoanController {
      * Body: { "clientAge": 30, "monthlyIncome": 5000, "monthlyDebt": 1000 }
      */
     @PostMapping("/{loanId}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Approve a Loan", description = "Evaluates risk using external engine and approves loan if eligible.")
     public ResponseEntity<LoanResource> approveLoan(
             @PathVariable Long loanId,
@@ -78,6 +81,7 @@ public class LoanController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
     @Operation(summary = "Get Loans by Client", description = "Retrieves all loans associated with a specific client ID.")
     public ResponseEntity<List<LoanResource>> getLoansByClientId(@RequestParam Long clientId) {
         var getLoanByClientQuery = new GetLoanByClientQuery(clientId);

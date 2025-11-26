@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -52,6 +53,7 @@ public class ClientController {
      * @return The created client resource.
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
     @Operation(summary = "Create a new Client", description = "Creates a new client in the system with the provided information.")
     public ResponseEntity<ClientResource> createClient(@RequestBody CreateClientResource resource) {
         // 1. Transform Resource (JSON) -> Command (Domain)
@@ -79,6 +81,7 @@ public class ClientController {
      * @return The client resource if found.
      */
     @GetMapping("/email/{email}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get Client by Email", description = "Retrieves a client based on their email address.")
     public ResponseEntity<ClientResource> getClientByEmail(@PathVariable String email) {
 
@@ -103,6 +106,7 @@ public class ClientController {
      * @return The client resource if found.
      */
     @GetMapping("/dni/{dni}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get Client by DNI", description = "Retrieves a client based on their DNI.")
     public ResponseEntity<ClientResource> getClientByDni(@PathVariable String dni) {
 
@@ -119,6 +123,7 @@ public class ClientController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ClientResource>> getAllClients() {
         var getAllClients = new GetAllClientsQuery();
         var client = clientQueryService.handle(getAllClients);

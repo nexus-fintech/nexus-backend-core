@@ -37,7 +37,7 @@ public class OpenApiConfiguration {
                         .url("https://github.com/tu-usuario/nexus-finance"));
 
         // Add security scheme
-        /*final String securitySchemeName = "bearerAuth";
+        final String securitySchemeName = "bearerAuth";
 
         openApi.addSecurityItem(new SecurityRequirement()
                         .addList(securitySchemeName))
@@ -47,7 +47,7 @@ public class OpenApiConfiguration {
                                         .name(securitySchemeName)
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
-                                        .bearerFormat("JWT")));*/
+                                        .bearerFormat("JWT")));
 
         return openApi;
     }

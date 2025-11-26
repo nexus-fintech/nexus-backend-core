@@ -1,6 +1,12 @@
 package com.nexus.backend.shared.domain.model.aggregates;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import java.util.Date;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -25,13 +31,5 @@ public class AuditableAbstractAggregateRoot<T extends AbstractAggregateRoot<T>> 
     @LastModifiedDate
     @Column(nullable = false)
     private Date updatedAt;
-
-    /*public void setCreatedAt() {
-        this.createdAt = new Date();
-    }
-
-    public void setUpdatedAt() {
-        this.updatedAt = new Date();
-    }*/
 
 }
