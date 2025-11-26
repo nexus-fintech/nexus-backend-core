@@ -1,6 +1,7 @@
 package com.nexus.backend.iam.interfaces.rest.transform;
 
 import com.nexus.backend.iam.domain.model.aggregates.User;
+import com.nexus.backend.iam.domain.model.entities.Role;
 import com.nexus.backend.iam.interfaces.rest.resources.AuthenticatedUserResource;
 
 /**
@@ -17,6 +18,9 @@ public class AuthenticatedUserResourceFromEntityAssembler {
    * @return the AuthenticatedUserResource
    */
   public static AuthenticatedUserResource toResourceFromEntity(User user, String token) {
-    return new AuthenticatedUserResource(user.getId(), user.getUsername(), token);
+      var roles = user.getRoles().stream()
+              .map(Role::getStringName)
+              .toList();
+    return new AuthenticatedUserResource(user.getId(), user.getUsername(), token, roles);
   }
 }
