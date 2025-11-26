@@ -9,6 +9,7 @@ import com.nexus.backend.iam.domain.model.queries.GetUserByIdQuery;
 import com.nexus.backend.iam.domain.model.queries.GetUserByUsernameQuery;
 import com.nexus.backend.iam.domain.services.UserCommandService;
 import com.nexus.backend.iam.domain.services.UserQueryService;
+import org.springframework.stereotype.Service;
 
 /**
  * IamContextFacade.
@@ -20,6 +21,7 @@ import com.nexus.backend.iam.domain.services.UserQueryService;
  * </p>
  *
  */
+@Service
 public class IamContextFacade {
 
   private final UserCommandService userCommandService;

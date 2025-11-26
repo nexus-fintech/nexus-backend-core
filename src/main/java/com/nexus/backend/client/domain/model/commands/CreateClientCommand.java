@@ -12,6 +12,7 @@ public record CreateClientCommand(
         String street,
         String city,
         String zipCode,
-        String country
+        String country,
+        Long userId
 ) {
 }

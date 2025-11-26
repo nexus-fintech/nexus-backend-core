@@ -47,6 +47,9 @@ public class Client extends AuditableAbstractAggregateRoot<Client> {
     })
     private StreetAddress address;
 
+    @Column(nullable = false, unique = true)
+    private Long userId;
+
     /**
      * Constructor that handles the creation of the aggregate based on the command.
      * This is where the transformation from flat data (Command) to Value Objects (Domain) occurs.
@@ -61,6 +64,7 @@ public class Client extends AuditableAbstractAggregateRoot<Client> {
                 command.zipCode(),
                 command.country()
         );
+        this.userId = command.userId();
     }
 
     // Business methods would go here, e.g., updateAddress(), changeEmail(), etc.

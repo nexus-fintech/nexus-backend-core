@@ -36,4 +36,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
      * Checks existence by EmailAddress value object.
      */
     boolean existsByEmail(EmailAddress email);
+
+    Optional<Client> findByUserId(Long userId);
+    boolean existsByUserId(Long userId);
 }

@@ -8,7 +8,7 @@ import com.nexus.backend.client.interfaces.rest.resources.CreateClientResource;
  */
 public class CreateClientCommandFromResourceAssembler {
 
-    public static CreateClientCommand toCommandFromResource(CreateClientResource resource) {
+    public static CreateClientCommand toCommandFromResource(CreateClientResource resource, Long userId) {
         return new CreateClientCommand(
                 resource.firstName(),
                 resource.lastName(),
@@ -17,7 +17,8 @@ public class CreateClientCommandFromResourceAssembler {
                 resource.street(),
                 resource.city(),
                 resource.zipCode(),
-                resource.country()
+                resource.country(),
+                userId
         );
     }
 }

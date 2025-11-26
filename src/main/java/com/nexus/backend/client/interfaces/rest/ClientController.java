@@ -11,11 +11,14 @@ import com.nexus.backend.client.interfaces.rest.resources.ClientResource;
 import com.nexus.backend.client.interfaces.rest.resources.CreateClientResource;
 import com.nexus.backend.client.interfaces.rest.transform.ClientResourceFromEntityAssembler;
 import com.nexus.backend.client.interfaces.rest.transform.CreateClientCommandFromResourceAssembler;
+import com.nexus.backend.iam.interfaces.acl.IamContextFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -33,6 +36,7 @@ public class ClientController {
 
     private final ClientCommandService clientCommandService;
     private final ClientQueryService clientQueryService;
+    private final IamContextFacade iamContextFacade;
 
     /**
      * Constructor for ClientController.
@@ -41,9 +45,10 @@ public class ClientController {
      * @param clientCommandService the service to handle client commands
      * @param clientQueryService   the service to handle client queries
      */
-    public ClientController(ClientCommandService clientCommandService, ClientQueryService clientQueryService) {
+    public ClientController(ClientCommandService clientCommandService, ClientQueryService clientQueryService, IamContextFacade iamContextFacade) {
         this.clientCommandService = clientCommandService;
         this.clientQueryService = clientQueryService;
+        this.iamContextFacade = iamContextFacade;
     }
 
     /**
@@ -56,19 +61,24 @@ public class ClientController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
     @Operation(summary = "Create a new Client", description = "Creates a new client in the system with the provided information.")
     public ResponseEntity<ClientResource> createClient(@RequestBody CreateClientResource resource) {
-        // 1. Transform Resource (JSON) -> Command (Domain)
-        var createClientCommand = CreateClientCommandFromResourceAssembler.toCommandFromResource(resource);
 
-        // 2. Execute Command Service
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Long userId = iamContextFacade.fetchUserIdByUsername(username);
+
+        if (userId == 0L) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        var createClientCommand = CreateClientCommandFromResourceAssembler.toCommandFromResource(resource, userId);
         var client = clientCommandService.handle(createClientCommand);
 
         if (client.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        // 3. Transform Entity (Domain) -> Resource (JSON Response)
         var clientResource = ClientResourceFromEntityAssembler.toResourceFromEntity(client.get());
-
         return new ResponseEntity<>(clientResource, HttpStatus.CREATED);
     }
 
