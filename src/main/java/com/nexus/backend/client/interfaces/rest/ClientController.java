@@ -3,6 +3,7 @@ package com.nexus.backend.client.interfaces.rest;
 import com.nexus.backend.client.domain.model.queries.GetAllClientsQuery;
 import com.nexus.backend.client.domain.model.queries.GetClientByDniQuery;
 import com.nexus.backend.client.domain.model.queries.GetClientByEmailQuery;
+import com.nexus.backend.client.domain.model.queries.GetClientByUserIdQuery;
 import com.nexus.backend.client.domain.model.valueobjects.Dni;
 import com.nexus.backend.client.domain.model.valueobjects.EmailAddress;
 import com.nexus.backend.client.domain.services.ClientCommandService;
@@ -140,5 +141,21 @@ public class ClientController {
         var clientResources = client.stream().map(
                 ClientResourceFromEntityAssembler::toResourceFromEntity).toList();
         return ResponseEntity.ok(clientResources);
+    }
+
+    @GetMapping("/by-user/{userId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @Operation(summary = "Get Client by User ID", description = "Retrieves the client profile associated with a specific IAM User ID.")
+    public ResponseEntity<ClientResource> getClientByUserId(@PathVariable Long userId) {
+
+        var query = new GetClientByUserIdQuery(userId);
+        var client = clientQueryService.handle(query);
+
+        if (client.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var resource = ClientResourceFromEntityAssembler.toResourceFromEntity(client.get());
+        return ResponseEntity.ok(resource);
     }
 }
