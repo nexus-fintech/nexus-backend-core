@@ -1,10 +1,7 @@
 package com.nexus.backend.client.application.internal.queryservices;
 
 import com.nexus.backend.client.domain.model.aggregates.Client;
-import com.nexus.backend.client.domain.model.queries.GetAllClientsQuery;
-import com.nexus.backend.client.domain.model.queries.GetClientByDniQuery;
-import com.nexus.backend.client.domain.model.queries.GetClientByEmailQuery;
-import com.nexus.backend.client.domain.model.queries.GetClientByUserIdQuery;
+import com.nexus.backend.client.domain.model.queries.*;
 import com.nexus.backend.client.domain.services.ClientQueryService;
 import com.nexus.backend.client.infrastructure.persistence.jpa.repositories.ClientRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +38,10 @@ public class ClientQueryServiceImpl implements ClientQueryService {
     @Override
     public Optional<Client> handle(GetClientByUserIdQuery query) {
         return clientRepository.findByUserId(query.userId());
+    }
+
+    @Override
+    public Optional<Client> handle(GetClientByIdQuery query) {
+        return clientRepository.findById(query.clientId());
     }
 }
