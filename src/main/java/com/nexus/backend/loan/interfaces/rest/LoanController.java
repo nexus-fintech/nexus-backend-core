@@ -40,7 +40,7 @@ public class LoanController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
     @Operation(summary = "Request a new Loan", description = "Creates a loan application for a specific client.")
     public ResponseEntity<LoanResource> requestLoan(@RequestBody RequestLoanResource resource) {
         var requestLoanCommand = RequestLoanCommandFromResourceAssembler.toCommandFromResource(resource);
