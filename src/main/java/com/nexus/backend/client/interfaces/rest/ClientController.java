@@ -7,8 +7,10 @@ import com.nexus.backend.client.domain.services.ClientCommandService;
 import com.nexus.backend.client.domain.services.ClientQueryService;
 import com.nexus.backend.client.interfaces.rest.resources.ClientResource;
 import com.nexus.backend.client.interfaces.rest.resources.CreateClientResource;
+import com.nexus.backend.client.interfaces.rest.resources.UpdateClientResource;
 import com.nexus.backend.client.interfaces.rest.transform.ClientResourceFromEntityAssembler;
 import com.nexus.backend.client.interfaces.rest.transform.CreateClientCommandFromResourceAssembler;
+import com.nexus.backend.client.interfaces.rest.transform.UpdateClientCommandFromResourceAssembler;
 import com.nexus.backend.iam.interfaces.acl.IamContextFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -167,6 +169,24 @@ public class ClientController {
         if (client.isEmpty()) return ResponseEntity.notFound().build();
 
         var clientResource = ClientResourceFromEntityAssembler.toResourceFromEntity(client.get());
+        return ResponseEntity.ok(clientResource);
+    }
+
+    @PutMapping("/{clientId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @Operation(summary = "Update Client", description = "Updates an existing client profile information.")
+    public ResponseEntity<ClientResource> updateClient(
+            @PathVariable Long clientId,
+            @RequestBody UpdateClientResource resource) {
+
+        var updateCommand = UpdateClientCommandFromResourceAssembler.toCommandFromResource(clientId, resource);
+        var updatedClient = clientCommandService.handle(updateCommand);
+
+        if (updatedClient.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var clientResource = ClientResourceFromEntityAssembler.toResourceFromEntity(updatedClient.get());
         return ResponseEntity.ok(clientResource);
     }
 }

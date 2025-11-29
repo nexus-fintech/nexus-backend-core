@@ -68,4 +68,16 @@ public class Client extends AuditableAbstractAggregateRoot<Client> {
     }
 
     // Business methods would go here, e.g., updateAddress(), changeEmail(), etc.
+
+    /**
+     * Business Method: Update Profile Information.
+     * Replaces the current Value Objects with new validated values.
+     */
+    public void updateInformation(String firstName, String lastName, String email, String dni,
+                                  String street, String city, String zipCode, String country) {
+        this.name = new PersonName(firstName, lastName);
+        this.email = new EmailAddress(email);
+        this.dni = new Dni(dni);
+        this.address = new StreetAddress(street, city, zipCode, country);
+    }
 }

@@ -2,6 +2,7 @@ package com.nexus.backend.client.application.internal.commandservices;
 
 import com.nexus.backend.client.domain.model.aggregates.Client;
 import com.nexus.backend.client.domain.model.commands.CreateClientCommand;
+import com.nexus.backend.client.domain.model.commands.UpdateClientCommand;
 import com.nexus.backend.client.domain.model.valueobjects.Dni;
 import com.nexus.backend.client.domain.model.valueobjects.EmailAddress;
 import com.nexus.backend.client.domain.services.ClientCommandService;
@@ -42,5 +43,34 @@ public class ClientCommandServiceImpl implements ClientCommandService {
         var createdClient = clientRepository.save(client);
 
         return Optional.of(createdClient);
+    }
+
+    @Override
+    public Optional<Client> handle(UpdateClientCommand command) {
+        var result = clientRepository.findById(command.id());
+
+        if (result.isEmpty()) {
+            return Optional.empty();
+        }
+
+        var client = result.get();
+
+        client.updateInformation(
+                command.firstName(),
+                command.lastName(),
+                command.email(),
+                command.dni(),
+                command.street(),
+                command.city(),
+                command.zipCode(),
+                command.country()
+        );
+
+        try {
+            var updatedClient = clientRepository.save(client);
+            return Optional.of(updatedClient);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error updating client: Possible duplicate DNI or Email.");
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.nexus.backend.client.domain.services;
 
 import com.nexus.backend.client.domain.model.aggregates.Client;
 import com.nexus.backend.client.domain.model.commands.CreateClientCommand;
+import com.nexus.backend.client.domain.model.commands.UpdateClientCommand;
 
 import java.util.Optional;
 
@@ -20,4 +21,6 @@ public interface ClientCommandService {
      * @return The created client (Optional) if the operation was successful.
      */
     Optional<Client> handle(CreateClientCommand command);
+
+    Optional<Client> handle(UpdateClientCommand command);
 }
