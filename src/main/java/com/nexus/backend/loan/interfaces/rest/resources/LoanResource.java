@@ -2,6 +2,7 @@ package com.nexus.backend.loan.interfaces.rest.resources;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Output Resource (Response Body).
@@ -15,6 +16,7 @@ public record LoanResource(
         double annualInterestRate,
         int termInMonths,
         String status,
-        LocalDate disbursementDate
+        LocalDate disbursementDate,
+        List<ScheduleEntryResource> schedule
 ) {
 }

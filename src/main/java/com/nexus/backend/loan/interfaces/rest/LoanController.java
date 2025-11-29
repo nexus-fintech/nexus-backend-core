@@ -1,6 +1,7 @@
 package com.nexus.backend.loan.interfaces.rest;
 
 import com.nexus.backend.loan.domain.model.queries.GetLoanByClientQuery;
+import com.nexus.backend.loan.domain.model.queries.GetLoanByIdQuery;
 import com.nexus.backend.loan.domain.services.LoanCommandService;
 import com.nexus.backend.loan.domain.services.LoanQueryService;
 import com.nexus.backend.loan.interfaces.rest.resources.ApproveLoanResource;
@@ -92,5 +93,24 @@ public class LoanController {
                 .toList();
 
         return ResponseEntity.ok(loanResources);
+    }
+
+    /**
+     * Returns the FULL details including the payment schedule.
+     */
+    @GetMapping("/{loanId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @Operation(summary = "Get Loan Details", description = "Retrieves full loan details including amortization schedule.")
+    public ResponseEntity<LoanResource> getLoanById(@PathVariable Long loanId) {
+        var getLoanByIdQuery = new GetLoanByIdQuery(loanId);
+        var loan = loanQueryService.handle(getLoanByIdQuery);
+
+        if (loan.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var loanResource = LoanResourceFromEntityAssembler.toResourceFromEntityWithSchedule(loan.get());
+
+        return ResponseEntity.ok(loanResource);
     }
 }

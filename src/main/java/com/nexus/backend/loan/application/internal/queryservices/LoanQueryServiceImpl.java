@@ -2,12 +2,14 @@ package com.nexus.backend.loan.application.internal.queryservices;
 
 import com.nexus.backend.loan.domain.model.aggregates.Loan;
 import com.nexus.backend.loan.domain.model.queries.GetLoanByClientQuery;
+import com.nexus.backend.loan.domain.model.queries.GetLoanByIdQuery;
 import com.nexus.backend.loan.domain.services.LoanQueryService;
 import com.nexus.backend.loan.infrastructure.persistence.jpa.repositories.LoanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementation of the Loan Query Service.
@@ -30,4 +32,15 @@ public class LoanQueryServiceImpl implements LoanQueryService {
         // Delegate the search to the repository using the ID provided in the query.
         return loanRepository.findByClientId(query.clientId());
     }
+
+    /**
+     * Handles search by ID.
+     * Uses the standard JpaRepository method.
+     */
+    @Override
+    public Optional<Loan> handle(GetLoanByIdQuery query) {
+        return loanRepository.findById(query.loanId());
+    }
+
+
 }
