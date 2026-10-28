@@ -15,4 +15,18 @@ public record RequestLoanCommand(
         int termInMonths,
         double annualInterestRate
 ) {
+    public RequestLoanCommand {
+        if (clientId == null) {
+            throw new IllegalArgumentException("Client ID cannot be null");
+        }
+        if (requestedAmount == null || requestedAmount.signum() <= 0) {
+            throw new IllegalArgumentException("Requested amount must be greater than zero");
+        }
+        if (termInMonths < 1) {
+            throw new IllegalArgumentException("Term must be at least one month");
+        }
+        if (annualInterestRate < 0 || annualInterestRate > 1) {
+            throw new IllegalArgumentException("Annual interest rate must be between 0 and 1");
+        }
+    }
 }
