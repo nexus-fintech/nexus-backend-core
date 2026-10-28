@@ -86,12 +86,18 @@ public class LoanCommandServiceImpl implements LoanCommandService {
     private List<ScheduleEntry> calculateFrenchAmortizationSchedule(BigDecimal principal, BigDecimal annualRate, int months) {
         List<ScheduleEntry> schedule = new ArrayList<>();
         BigDecimal monthlyRate = annualRate.divide(BigDecimal.valueOf(12), MathContext.DECIMAL128);
-        BigDecimal onePlusRateToN = monthlyRate.add(BigDecimal.ONE).pow(months);
 
         // Fixed Payment Formula: P * (i * (1+i)^n) / ((1+i)^n - 1)
-        BigDecimal numerator = principal.multiply(monthlyRate).multiply(onePlusRateToN);
-        BigDecimal denominator = onePlusRateToN.subtract(BigDecimal.ONE);
-        BigDecimal fixedMonthlyPayment = numerator.divide(denominator, 2, RoundingMode.HALF_UP);
+        // At 0% the formula divides by zero; the payment is simply P / n
+        BigDecimal fixedMonthlyPayment;
+        if (monthlyRate.signum() == 0) {
+            fixedMonthlyPayment = principal.divide(BigDecimal.valueOf(months), 2, RoundingMode.HALF_UP);
+        } else {
+            BigDecimal onePlusRateToN = monthlyRate.add(BigDecimal.ONE).pow(months);
+            BigDecimal numerator = principal.multiply(monthlyRate).multiply(onePlusRateToN);
+            BigDecimal denominator = onePlusRateToN.subtract(BigDecimal.ONE);
+            fixedMonthlyPayment = numerator.divide(denominator, 2, RoundingMode.HALF_UP);
+        }
 
         BigDecimal remainingPrincipal = principal;
         LocalDate nextDueDate = LocalDate.now().plusMonths(1);
