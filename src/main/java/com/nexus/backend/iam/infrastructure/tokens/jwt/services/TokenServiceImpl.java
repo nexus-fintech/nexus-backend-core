@@ -2,6 +2,7 @@ package com.nexus.backend.iam.infrastructure.tokens.jwt.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -115,6 +116,9 @@ public class TokenServiceImpl implements BearerTokenService {
       logger.error("JSON Web Token is unsupported: {}", e.getMessage());
     } catch (IllegalArgumentException e) {
       logger.error("JSON Web Token claims string is empty: {}", e.getMessage());
+    } catch (JwtException e) {
+      // Any other rejection (e.g. a token signed with HS384/HS512 against a shorter key: WeakKeyException)
+      logger.error("Invalid JSON Web Token: {}", e.getMessage());
     }
     return false;
   }
