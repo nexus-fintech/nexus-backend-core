@@ -1,5 +1,7 @@
 # **Nexus Finance \- Backend Core 🏦**
 
+[![CI](https://github.com/nexus-fintech/nexus-backend-core/actions/workflows/ci.yml/badge.svg)](https://github.com/nexus-fintech/nexus-backend-core/actions/workflows/ci.yml)
+
 **Núcleo transaccional de la plataforma Nexus Finance. Gestiona el ciclo de vida de clientes y créditos mediante una arquitectura distribuida y orientada al dominio.**
 
 ## **🏗️ Arquitectura y Diseño**
@@ -46,6 +48,22 @@ El sistema está modulado en contextos delimitados para garantizar alta cohesió
    * Generación de cuotas (Capital \+ Interés) con precisión BigDecimal.  
    * Transición de estado a ACTIVE de forma atómica.
 
+## **🧪 Pruebas**
+
+55 pruebas automatizadas (JUnit 5, Mockito y MockMvc) con **74 % de cobertura de líneas** (92 % en el contexto de préstamos). Corren en cada push con GitHub Actions y el build falla si la cobertura baja del 70 %.
+
+| Nivel | Qué verifica |
+| :---- | :---- |
+| **Dominio** | `Money` y su redondeo, ciclo de vida del préstamo, validación de comandos y objetos de valor del cliente |
+| **Amortización** | Cuota fija del sistema francés (10,000 al 12 % anual en 12 meses: 888.49), capital que suma exacto, préstamos al 0 % y fechas de vencimiento |
+| **Servicios** | Casos de uso de clientes y préstamos con Mockito, y la traducción del ACL hacia el motor de riesgo |
+| **Seguridad** | Hash con BCrypt y emisión y validación de JWT |
+| **API (integración)** | Flujo real por HTTP con la cadena de seguridad y H2: login, alta de cliente, solicitud y aprobación del préstamo, y las respuestas 400, 401, 404 y 409 |
+
+```bash
+mvn verify   # pruebas + reporte de cobertura en target/site/jacoco
+```
+
 ## **🚀 Despliegue Local (Docker)**
 
 El proyecto está diseñado para ser orquestado junto con su base de datos y el motor de riesgo.
@@ -59,7 +77,7 @@ docker-compose up --build
 
 Una vez levantado, accede a la documentación interactiva:
 
-* 👉 **Swagger UI:** [https://localhost:8080/swagger-ui.html](https://www.google.com/search?q=http://localhost:8080/swagger-ui.html)
+* 👉 **Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 ## **👤 Autor**
 
