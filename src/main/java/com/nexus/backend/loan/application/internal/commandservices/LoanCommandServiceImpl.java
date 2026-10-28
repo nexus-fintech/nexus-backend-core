@@ -100,7 +100,8 @@ public class LoanCommandServiceImpl implements LoanCommandService {
         }
 
         BigDecimal remainingPrincipal = principal;
-        LocalDate nextDueDate = LocalDate.now().plusMonths(1);
+        // Each due date counts from the start, so a short month does not shift the rest (Jan 31 -> Feb 28 -> Mar 31)
+        LocalDate startDate = LocalDate.now();
 
         for (int i = 1; i <= months; i++) {
             BigDecimal interestPayment = remainingPrincipal.multiply(monthlyRate).setScale(2, RoundingMode.HALF_UP);
@@ -115,12 +116,11 @@ public class LoanCommandServiceImpl implements LoanCommandService {
 
             schedule.add(new ScheduleEntry(
                     i,
-                    nextDueDate,
+                    startDate.plusMonths(i),
                     new Money(principalPayment),
                     new Money(interestPayment),
                     new Money(BigDecimal.ZERO)
             ));
-            nextDueDate = nextDueDate.plusMonths(1);
         }
         return schedule;
     }
