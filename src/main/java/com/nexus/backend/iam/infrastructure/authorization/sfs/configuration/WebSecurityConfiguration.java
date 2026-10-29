@@ -4,6 +4,7 @@ import com.nexus.backend.iam.infrastructure.authorization.sfs.pipeline.BearerAut
 import com.nexus.backend.iam.infrastructure.hashing.bcrypt.BcryptHashingService;
 import com.nexus.backend.iam.infrastructure.tokens.jwt.BearerTokenService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,6 +39,8 @@ public class WebSecurityConfiguration {
   private final BcryptHashingService hashingService;
 
   private final AuthenticationEntryPoint unauthorizedRequestHandler;
+
+  private final List<String> allowedOrigins;
 
   /**
    * This method creates the Bearer Authorization Request Filter.
@@ -93,12 +96,13 @@ public class WebSecurityConfiguration {
    */
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    // Only the configured browser origins; the API uses bearer tokens, never cookies
     http.cors(corsConfigurer ->
         corsConfigurer.configurationSource(request -> {
           var cors = new CorsConfiguration();
-          cors.setAllowedOrigins(List.of("*"));
+          cors.setAllowedOrigins(allowedOrigins);
           cors.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
-          cors.setAllowedHeaders(List.of("*"));
+          cors.setAllowedHeaders(List.of("Authorization", "Content-Type"));
           return cors;
         }));
     http.csrf(csrfConfigurer -> csrfConfigurer.disable())
@@ -108,9 +112,9 @@ public class WebSecurityConfiguration {
             customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorizeRequests ->
             authorizeRequests
-                .requestMatchers("/api/v1/authentication/**", "/v3/api-docs/**",
-                    "/swagger-ui.html", "/swagger-ui/**", "/swagger-resources/**", "/webjars/**",
-                    "/actuator/**")
+                .requestMatchers("/api/v1/authentication/sign-in", "/api/v1/authentication/sign-up",
+                    "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/swagger-resources/**",
+                    "/webjars/**", "/actuator/health", "/actuator/health/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated());
@@ -126,15 +130,18 @@ public class WebSecurityConfiguration {
    * @param tokenService The token service
    * @param hashingService The hashing service
    * @param authenticationEntryPoint The authentication entry point
+   * @param allowedOrigins The browser origins allowed to call the API (nexus.cors.allowed-origins)
    */
   public WebSecurityConfiguration(
       @Qualifier("defaultUserDetailsService") UserDetailsService userDetailsService,
       BearerTokenService tokenService, BcryptHashingService hashingService,
-      AuthenticationEntryPoint authenticationEntryPoint) {
+      AuthenticationEntryPoint authenticationEntryPoint,
+      @Value("${nexus.cors.allowed-origins}") List<String> allowedOrigins) {
 
     this.userDetailsService = userDetailsService;
     this.tokenService = tokenService;
     this.hashingService = hashingService;
     this.unauthorizedRequestHandler = authenticationEntryPoint;
+    this.allowedOrigins = allowedOrigins;
   }
 }

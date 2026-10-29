@@ -4,8 +4,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TokenServiceImplTest {
+
+    @Test
+    void refusesToStartWithoutASecretOrWithOneTooShortForHs256() {
+        assertThatThrownBy(() -> tokenService(null).requireStrongSecret())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("JWT_SECRET");
+        assertThatThrownBy(() -> tokenService("31-bytes-is-one-short-of-enough").requireStrongSecret())
+                .isInstanceOf(IllegalStateException.class);
+        assertThatCode(() -> tokenService(SECRET).requireStrongSecret()).doesNotThrowAnyException();
+    }
 
     private static final String SECRET = "nexus-backend-core-test-secret-0123456789abcdef";
 

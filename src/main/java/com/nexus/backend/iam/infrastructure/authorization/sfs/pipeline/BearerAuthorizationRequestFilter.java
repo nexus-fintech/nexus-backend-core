@@ -58,15 +58,13 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     try {
+      // The token itself is never logged: anyone reading the logs could reuse the session
       String token = tokenService.getBearerTokenFrom(request);
-      LOGGER.info("Token: {}", token);
       if (token != null && tokenService.validateToken(token)) {
         String username = tokenService.getUsernameFromToken(token);
         var userDetails = userDetailsService.loadUserByUsername(username);
         SecurityContextHolder.getContext().setAuthentication(
             UsernamePasswordAuthenticationTokenBuilder.build(userDetails, request));
-      } else {
-        LOGGER.info("Token is not valid");
       }
     } catch (Exception e) {
       LOGGER.error("Cannot set user authentication: {}", e.getMessage());

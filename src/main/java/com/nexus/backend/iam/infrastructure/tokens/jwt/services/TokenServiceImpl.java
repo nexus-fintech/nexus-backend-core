@@ -8,6 +8,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -36,11 +37,26 @@ public class TokenServiceImpl implements BearerTokenService {
 
   private static final int TOKEN_BEGIN_INDEX = 7;
 
+  /** HS256 needs a key of at least 256 bits. */
+  private static final int MIN_SECRET_BYTES = 32;
+
   @Value("${authorization.jwt.secret}")
   private String secret;
 
   @Value("${authorization.jwt.expiration.days}")
   private int expirationDays;
+
+  /**
+   * Refuses to start with a weak secret. Otherwise the application would start and fail at the first
+   * sign-in, or sign tokens with a key short enough to guess.
+   */
+  @PostConstruct
+  void requireStrongSecret() {
+    if (secret == null || secret.getBytes(StandardCharsets.UTF_8).length < MIN_SECRET_BYTES) {
+      throw new IllegalStateException(
+          "JWT_SECRET must have at least " + MIN_SECRET_BYTES + " bytes of random text");
+    }
+  }
 
   /**
    * This method generates a JWT token from an authentication object.
@@ -104,7 +120,6 @@ public class TokenServiceImpl implements BearerTokenService {
   public boolean validateToken(String token) {
     try {
       Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
-      logger.info("Token is valid");
       return true;
     }  catch (SignatureException e) {
       logger.error("Invalid JSON Web Token Signature: {}", e.getMessage());
