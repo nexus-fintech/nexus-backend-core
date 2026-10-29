@@ -1,5 +1,6 @@
 package com.nexus.backend.loan.application.internal.commandservices;
 
+import com.nexus.backend.loan.application.internal.outboundservices.acl.ExternalClientService;
 import com.nexus.backend.loan.application.internal.outboundservices.acl.ExternalRiskEngineService;
 import com.nexus.backend.loan.domain.model.aggregates.Loan;
 import com.nexus.backend.loan.domain.model.commands.ApproveLoanCommand;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -37,6 +39,9 @@ class LoanCommandServiceImplTest {
 
     @Mock
     private ExternalRiskEngineService riskEngineService;
+
+    @Mock
+    private ExternalClientService clientService;
 
     @InjectMocks
     private LoanCommandServiceImpl service;
@@ -60,6 +65,7 @@ class LoanCommandServiceImplTest {
 
     @Test
     void requestingALoanStoresItAsRequestedWithoutCallingTheRiskEngine() {
+        when(clientService.existsClient(7L)).thenReturn(true);
         when(loanRepository.save(any(Loan.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         var loan = service.handle(new RequestLoanCommand(7L, new BigDecimal("3000"), 6, 0.20)).orElseThrow();
@@ -67,6 +73,16 @@ class LoanCommandServiceImplTest {
         assertThat(loan.getStatus()).isEqualTo(LoanStatus.REQUESTED);
         verify(loanRepository).save(loan);
         verifyNoInteractions(riskEngineService);
+    }
+
+    @Test
+    void aLoanForAClientThatDoesNotExistIsRefusedAndNothingIsStored() {
+        when(clientService.existsClient(404L)).thenReturn(false);
+
+        assertThatThrownBy(() -> service.handle(new RequestLoanCommand(404L, new BigDecimal("3000"), 6, 0.20)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("404");
+        verifyNoInteractions(loanRepository, riskEngineService);
     }
 
     @Test

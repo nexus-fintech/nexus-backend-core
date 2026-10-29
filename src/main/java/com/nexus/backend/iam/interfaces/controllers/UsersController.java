@@ -3,6 +3,7 @@ package com.nexus.backend.iam.interfaces.controllers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,9 @@ import java.util.List;
  * It includes the following operations:
  * - GET /api/v1/users: returns all the users
  * - GET /api/v1/users/{userId}: returns the user with the given id
+ * Both are for administrators only: a client must not list other people's accounts.
  **/
+@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping(value = "/api/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Users", description = "User Management Endpoints")

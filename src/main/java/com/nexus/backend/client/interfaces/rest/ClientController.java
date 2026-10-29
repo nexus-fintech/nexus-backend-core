@@ -26,9 +26,9 @@ import java.util.List;
 
 /**
  * REST controller for managing client profiles.
+ * A client reaches only its own profile ({@link ClientAccessGuard}); an administrator reaches all.
+ * CORS is configured once, in the security filter chain.
  */
-@CrossOrigin(origins = "*", methods = { RequestMethod.POST, RequestMethod.GET,
-        RequestMethod.PUT, RequestMethod.DELETE })
 @RestController
 @RequestMapping(value = "/api/v1/clients", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Clients", description = "Client Management Endpoints")
@@ -143,7 +143,7 @@ public class ClientController {
     }
 
     @GetMapping("/by-user/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @PreAuthorize("hasRole('ADMIN') or @clientAccessGuard.isCurrentUser(authentication, #userId)")
     @Operation(summary = "Get Client by User ID", description = "Retrieves the client profile associated with a specific IAM User ID.")
     public ResponseEntity<ClientResource> getClientByUserId(@PathVariable Long userId) {
 
@@ -159,7 +159,7 @@ public class ClientController {
     }
 
     @GetMapping("/{clientId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @PreAuthorize("hasRole('ADMIN') or @clientAccessGuard.ownsClient(authentication, #clientId)")
     @Operation(summary = "Get Client by ID", description = "Retrieves a client profile by its unique ID.")
     public ResponseEntity<ClientResource> getClientById(@PathVariable Long clientId) {
 
@@ -173,7 +173,7 @@ public class ClientController {
     }
 
     @PutMapping("/{clientId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @PreAuthorize("hasRole('ADMIN') or @clientAccessGuard.ownsClient(authentication, #clientId)")
     @Operation(summary = "Update Client", description = "Updates an existing client profile information.")
     public ResponseEntity<ClientResource> updateClient(
             @PathVariable Long clientId,

@@ -23,9 +23,9 @@ import java.util.List;
 /**
  * REST controller for managing loans.
  * Exposes endpoints for requesting, retrieving, and approving loans.
+ * A client requests and reads only the loans of its own profile ({@link LoanAccessGuard}); only an
+ * administrator approves. CORS is configured once, in the security filter chain.
  */
-@CrossOrigin(origins = "*", methods = { RequestMethod.POST, RequestMethod.GET,
-        RequestMethod.PUT, RequestMethod.DELETE })
 @RestController
 @RequestMapping(value = "/api/v1/loans", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Loans", description = "Loan Management Endpoints")
@@ -40,7 +40,7 @@ public class LoanController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @PreAuthorize("hasRole('ADMIN') or @loanAccessGuard.ownsClient(authentication, #resource.clientId())")
     @Operation(summary = "Request a new Loan", description = "Creates a loan application for a specific client.")
     public ResponseEntity<LoanResource> requestLoan(@RequestBody RequestLoanResource resource) {
         var requestLoanCommand = RequestLoanCommandFromResourceAssembler.toCommandFromResource(resource);
@@ -82,7 +82,7 @@ public class LoanController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @PreAuthorize("hasRole('ADMIN') or @loanAccessGuard.ownsClient(authentication, #clientId)")
     @Operation(summary = "Get Loans by Client", description = "Retrieves all loans associated with a specific client ID.")
     public ResponseEntity<List<LoanResource>> getLoansByClientId(@RequestParam Long clientId) {
         var getLoanByClientQuery = new GetLoanByClientQuery(clientId);
@@ -99,7 +99,7 @@ public class LoanController {
      * Returns the FULL details including the payment schedule.
      */
     @GetMapping("/{loanId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @PreAuthorize("hasRole('ADMIN') or @loanAccessGuard.ownsLoan(authentication, #loanId)")
     @Operation(summary = "Get Loan Details", description = "Retrieves full loan details including amortization schedule.")
     public ResponseEntity<LoanResource> getLoanById(@PathVariable Long loanId) {
         var getLoanByIdQuery = new GetLoanByIdQuery(loanId);

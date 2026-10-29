@@ -1,5 +1,6 @@
 package com.nexus.backend.loan.application.internal.commandservices;
 
+import com.nexus.backend.loan.application.internal.outboundservices.acl.ExternalClientService;
 import com.nexus.backend.loan.application.internal.outboundservices.acl.ExternalRiskEngineService;
 import com.nexus.backend.loan.domain.model.aggregates.Loan;
 import com.nexus.backend.loan.domain.model.commands.ApproveLoanCommand;
@@ -26,9 +27,18 @@ public class LoanCommandServiceImpl implements LoanCommandService {
 
     private final LoanRepository loanRepository;
     private final ExternalRiskEngineService riskEngineService; // Inyectamos la ACL
+    private final ExternalClientService clientService;
 
+    /**
+     * Stores a loan request for an existing client.
+     *
+     * @throws IllegalArgumentException if no client has that id: a loan must always have an owner
+     */
     @Override
     public Optional<Loan> handle(RequestLoanCommand command) {
+        if (!clientService.existsClient(command.clientId())) {
+            throw new IllegalArgumentException("Client " + command.clientId() + " does not exist");
+        }
         var loan = new Loan(command);
         var createdLoan = loanRepository.save(loan);
         return Optional.of(createdLoan);
