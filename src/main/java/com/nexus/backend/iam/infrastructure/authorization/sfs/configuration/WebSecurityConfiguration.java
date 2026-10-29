@@ -112,6 +112,9 @@ public class WebSecurityConfiguration {
             customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorizeRequests ->
             authorizeRequests
+                // /error renders the status of an error that already happened. If it needed a
+                // session, a malformed request from someone not signed in would answer 401, not 400.
+                .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/v1/authentication/sign-in", "/api/v1/authentication/sign-up",
                     "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/swagger-resources/**",
                     "/webjars/**", "/actuator/health", "/actuator/health/**")

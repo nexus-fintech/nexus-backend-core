@@ -58,7 +58,7 @@ El sistema está modulado en contextos delimitados para garantizar alta cohesió
 
 ## **🧪 Pruebas**
 
-68 pruebas automatizadas (JUnit 5, Mockito y MockMvc) con **83 % de cobertura de líneas** (96 % en el contexto de préstamos). Corren en cada push con GitHub Actions y el build falla si la cobertura baja del 70 %.
+70 pruebas automatizadas (JUnit 5, Mockito, MockMvc y un servidor HTTP real) con **83 % de cobertura de líneas** (96 % en el contexto de préstamos). Corren en cada push con GitHub Actions y el build falla si la cobertura baja del 70 %.
 
 | Nivel | Qué verifica |
 | :---- | :---- |
