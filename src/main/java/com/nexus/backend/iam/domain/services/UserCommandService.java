@@ -2,6 +2,7 @@ package com.nexus.backend.iam.domain.services;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import com.nexus.backend.iam.domain.model.aggregates.User;
+import com.nexus.backend.iam.domain.model.commands.SeedAdministratorCommand;
 import com.nexus.backend.iam.domain.model.commands.SignInCommand;
 import com.nexus.backend.iam.domain.model.commands.SignUpCommand;
 
@@ -28,4 +29,13 @@ public interface UserCommandService {
    * @return an Optional containing the created User if successful, or empty if the sign-up failed
    */
   Optional<User> handle(SignUpCommand command);
+
+  /**
+   * Creates the first administrator if no user has that username yet. An existing user is left
+   * as it is: its password and roles are never reset from the configuration.
+   *
+   * @param command the administrator's credentials
+   * @return an Optional containing the created administrator, or empty if the username was taken
+   */
+  Optional<User> handle(SeedAdministratorCommand command);
 }

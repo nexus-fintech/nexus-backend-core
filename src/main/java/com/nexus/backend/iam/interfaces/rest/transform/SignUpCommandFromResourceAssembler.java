@@ -4,7 +4,7 @@ import com.nexus.backend.iam.domain.model.commands.SignUpCommand;
 import com.nexus.backend.iam.domain.model.entities.Role;
 import com.nexus.backend.iam.interfaces.rest.resources.SignUpResource;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Assembler class to convert SignUpResource to SignUpCommand.
@@ -13,14 +13,13 @@ public class SignUpCommandFromResourceAssembler {
 
   /**
    * Converts a SignUpResource to a SignUpCommand.
+   * The role is always the default one (client): administrators are never created through the
+   * public sign-up.
    *
    * @param resource the SignUpResource to convert
    * @return the corresponding SignUpCommand
    */
   public static SignUpCommand toCommandFromResource(SignUpResource resource) {
-    var roles = resource.roles() != null
-        ? resource.roles().stream().map(name -> Role.toRoleFromName(name)).toList()
-        : new ArrayList<Role>();
-    return new SignUpCommand(resource.username(), resource.password(), roles);
+    return new SignUpCommand(resource.username(), resource.password(), List.of(Role.getDefaultRole()));
   }
 }
