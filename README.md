@@ -48,29 +48,50 @@ El sistema está modulado en contextos delimitados para garantizar alta cohesió
    * Generación de cuotas (Capital \+ Interés) con precisión BigDecimal.  
    * Transición de estado a ACTIVE de forma atómica.
 
+## **🔐 Seguridad**
+
+* **Registro público solo para clientes.** El alta crea siempre una cuenta `ROLE_CLIENT`, aunque la petición pida otro rol. El primer administrador se crea al arrancar desde `NEXUS_ADMIN_USERNAME` y `NEXUS_ADMIN_PASSWORD`.
+* **Cada cliente ve y cambia solo lo suyo.** Perfil, préstamos y solicitudes pasan por `@PreAuthorize` con guardias de propiedad (`ClientAccessGuard`, `LoanAccessGuard`). Aprobar préstamos y listar usuarios y roles es del administrador. Un préstamo solo se pide para un cliente que existe.
+* **Login sin pistas.** Un usuario inexistente y una contraseña errónea responden igual: `401` con el mismo mensaje y en el mismo tiempo (se compara contra un hash señuelo).
+* **Sin secretos en el repositorio.** La clave JWT y las credenciales de la base llegan por variables de entorno, y la aplicación no arranca con una clave de menos de 32 bytes.
+* **Lo demás:** el token nunca se escribe en los logs, CORS acepta solo los orígenes configurados y de actuator solo `/actuator/health` es público.
+
 ## **🧪 Pruebas**
 
-55 pruebas automatizadas (JUnit 5, Mockito y MockMvc) con **74 % de cobertura de líneas** (92 % en el contexto de préstamos). Corren en cada push con GitHub Actions y el build falla si la cobertura baja del 70 %.
+68 pruebas automatizadas (JUnit 5, Mockito y MockMvc) con **83 % de cobertura de líneas** (96 % en el contexto de préstamos). Corren en cada push con GitHub Actions y el build falla si la cobertura baja del 70 %.
 
 | Nivel | Qué verifica |
 | :---- | :---- |
 | **Dominio** | `Money` y su redondeo, ciclo de vida del préstamo, validación de comandos y objetos de valor del cliente |
 | **Amortización** | Cuota fija del sistema francés (10,000 al 12 % anual en 12 meses: 888.49), capital que suma exacto, préstamos al 0 % y fechas de vencimiento |
 | **Servicios** | Casos de uso de clientes y préstamos con Mockito, y la traducción del ACL hacia el motor de riesgo |
-| **Seguridad** | Hash con BCrypt y emisión y validación de JWT |
+| **Seguridad** | Hash con BCrypt, emisión y validación de JWT, y que la aplicación no arranque con una clave débil |
 | **API (integración)** | Flujo real por HTTP con la cadena de seguridad y H2: login, alta de cliente, solicitud y aprobación del préstamo, y las respuestas 400, 401, 404 y 409 |
+| **Acceso (integración)** | El registro no da `ROLE_ADMIN`, el login fallido no revela si el usuario existe, un cliente no lee, cambia ni pide préstamos a nombre de otro, usuarios y roles solo para el admin, el primer admin desde la configuración, CORS por origen y el token fuera de los logs |
 
 ```bash
 mvn verify   # pruebas + reporte de cobertura en target/site/jacoco
 ```
 
-## **🚀 Despliegue Local (Docker)**
+## **⚙️ Configuración**
 
-El proyecto está diseñado para ser orquestado junto con su base de datos y el motor de riesgo.
+| Variable | Obligatoria | Para qué |
+| :---- | :---- | :---- |
+| `JWT_SECRET` | Sí | Firma los tokens. 32 caracteres aleatorios o más, p. ej. `openssl rand -hex 32` |
+| `DB_USERNAME`, `DB_PASSWORD` | Sí | Credenciales de MySQL |
+| `SPRING_DATASOURCE_URL` | No | URL de la base; por defecto `jdbc:mysql://localhost:3306/nexusdb` |
+| `RISK_ENGINE_URL` | No | API del motor de riesgo; por defecto `http://localhost:8000/api/v1` |
+| `NEXUS_ADMIN_USERNAME`, `NEXUS_ADMIN_PASSWORD` | No | Primer administrador, creado al arrancar si ese usuario no existe |
+| `CORS_ALLOWED_ORIGINS` | No | Orígenes del navegador separados por comas; por defecto `http://localhost:4200` |
+
+## **🚀 Despliegue Local**
+
+La plataforma completa (MySQL, este backend y el motor de riesgo) se levanta con Docker Compose desde [nexus-finance-platform](https://github.com/nexus-fintech/nexus-finance-platform). Para correr solo el backend contra un MySQL local:
 
 ```bash
-# Desde la raíz del proyecto (donde está docker-compose.yml)
-docker-compose up --build
+export JWT_SECRET=$(openssl rand -hex 32) DB_USERNAME=nexus DB_PASSWORD=...
+export NEXUS_ADMIN_USERNAME=admin NEXUS_ADMIN_PASSWORD=...   # opcional: el primer administrador
+mvn spring-boot:run
 ```
 
 ### **Documentación API (Swagger)**
